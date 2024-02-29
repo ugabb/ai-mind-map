@@ -7,6 +7,7 @@ export interface NodeState {
   nodes: Node[];
   addNode: (node: Node) => void;
   updateNodePosition: (nodeId: string, position: XYPosition) => void;
+  updateNodeText: (nodeId: string, position: text) => void;
   isCreatingNode: boolean;
   activeIsCreatingNode: () => void;
   disableIsCreatingNode: () => void;
@@ -35,6 +36,12 @@ const useNodeStore = create<NodeState>()((set) => ({
     set((state) => ({
       nodes: state.nodes.map((node) =>
         node.id === nodeId ? { ...node, position } : node
+      ),
+    })),
+  updateNodeText: (nodeId, newText) =>
+    set((state) => ({
+      nodes: state.nodes.map((node) =>
+        node.id === nodeId ? { ...node, newText } : node
       ),
     })),
   activeIsCreatingNode: () => set((state) => ({ isCreatingNode: true })),
