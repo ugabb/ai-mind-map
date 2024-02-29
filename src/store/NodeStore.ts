@@ -6,7 +6,10 @@ import { create, useStore } from "zustand";
 export interface NodeState {
   nodes: Node[];
   addNode: (node: Node) => void;
-  updateNodePosition: (nodeId: UUID, position: XYPosition) => void;
+  updateNodePosition: (nodeId: string, position: XYPosition) => void;
+  isCreatingNode: boolean;
+  activeIsCreatingNode: () => void;
+  disableIsCreatingNode: () => void;
 }
 
 const INITIAL_NODES = [
@@ -26,6 +29,7 @@ const INITIAL_NODES = [
 
 const useNodeStore = create<NodeState>()((set) => ({
   nodes: [],
+  isCreatingNode: false,
   addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
   updateNodePosition: (nodeId, position) =>
     set((state) => ({
@@ -33,6 +37,8 @@ const useNodeStore = create<NodeState>()((set) => ({
         node.id === nodeId ? { ...node, position } : node
       ),
     })),
+  activeIsCreatingNode: () => set((state) => ({ isCreatingNode: true })),
+  disableIsCreatingNode: () => set((state) => ({ isCreatingNode: false })),
 }));
 
 export default useNodeStore;

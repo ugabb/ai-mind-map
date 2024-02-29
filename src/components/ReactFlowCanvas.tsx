@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import ReactFlow, { Background, Connection, ConnectionMode, Controls, Node, addEdge, useEdgesState, useNodeId, useNodesState } from 'reactflow';
 
@@ -21,6 +21,12 @@ const EDGE_TYPES = {
 }
 
 const ReactFlowCanvas = () => {
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+
+    const handleMouseMove = (event) => {
+        setMousePosition({ x: event.clientX, y: event.clientY });
+    };
 
     const nodesStore: Node[] = useNodeStore((state) => state.nodes)
     const updateNodePosition = useNodeStore((state) => state.updateNodePosition)
@@ -43,6 +49,8 @@ const ReactFlowCanvas = () => {
         return setEdges(edges => addEdge(connection, edges))
     }, [])
 
+    const isCreatingNode = useNodeStore((state) => state.isCreatingNode)
+
     return (
         <ReactFlow
             nodeTypes={NODE_TYPES}
@@ -55,7 +63,22 @@ const ReactFlowCanvas = () => {
             onConnect={onConnect}
             onNodesChange={onNodesChange}
             onNodeDragStop={(e) => handleNodePosition(nodes)}
+            className='bg-zinc-50 cursor-crosshair'
+            onMouseMove={handleMouseMove}
         >
+            {isCreatingNode && (
+                <div
+                    className='bg-emerald-400/20 rounded  min-w-[200px] min-h-[200px]'
+                    style={{
+                        position: 'absolute',
+                        left: mousePosition.x - 8, // Adjust the offset as needed
+                        top: mousePosition.y - 8, // Adjust the offset as neededty
+                        pointerEvents: 'none', // Allow clicks to pass through
+                        zIndex: 1, // Ensure it's above the background
+                    }}
+                />
+            )}
+
             <Background
                 gap={12}
                 size={2}
@@ -63,6 +86,7 @@ const ReactFlowCanvas = () => {
             />
             <Controls />
         </ReactFlow>
+
     )
 }
 
