@@ -29,13 +29,8 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
         updateNodeText(data.id, editedLabel)
     };
 
-    // const nodeRef = useRef(null);
-
-    // useEffect(() => {
-    //     console.log(nodeRef?.current.getBoundingClientRect())
-    // }, [nodeRef.current])
     return (
-        <div  id={id} data-xPos={xPos} data-yPos={yPos} className="flex justify-center items-center text-white bg-emerald-400 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
+        <div id={id}  className="flex justify-center items-center text-white bg-emerald-400 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
             {isEditing ? (
                 <input
                     type="text"
@@ -61,6 +56,26 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                         position={Position.Right}
                         style={{ background: blue[400], width: "12px", height: "12px", right: "-20px" }}
                     />
+
+                    <Handle
+                        id="left"
+                        type="source"
+                        position={Position.Left}
+                        style={{ background: blue[400], width: "12px", height: "12px", left: "-20px" }}
+                    />
+                    <Handle
+                        id="top"
+                        type="source"
+                        position={Position.Top}
+                        style={{ background: blue[400], width: "12px", height: "12px", top: "-20px" }}
+                    />
+                    <Handle
+                        id="bottom"
+                        type="source"
+                        position={Position.Bottom}
+                        style={{ background: blue[400], width: "12px", height: "12px", bottom: "-20px" }}
+                    />
+
                     {/* ... (other handles) */}
                     {data.label}
                 </>

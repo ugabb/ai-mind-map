@@ -37,22 +37,19 @@ const ReactFlowCanvas = () => {
     const handleNodePosition = (event: any, nodes: Node[]) => {
 
         const selectedNodeId = event.target.getAttribute('id'); // Get the ID of the dragged node
-        const xPos = event.target.getAttribute('data-xPos'); // Get the x position of the dragged node
-        const yPos = event.target.getAttribute('data-yPos'); // Get the y position of the dragged node
-        const nodePosition = { x: xPos, y: yPos }; // Get the mouse position when the node is dropped
 
         // Update the node's position
         const updatedNodes = nodes.map((node: Node) => {
             if (node.id === selectedNodeId) {
                 return {
                     ...node,
-                    position: nodePosition
+                    position: node.positionAbsolute
                 };
             }
             return node;
         });
         console.log(updatedNodes)
-        updateNodes(updatedNodes);
+        updateNodes(updatedNodes as Node[]);
         console.log("Node position updated:", updatedNodes);
     };
 
