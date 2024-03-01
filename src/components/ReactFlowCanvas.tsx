@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import ReactFlow, { Background, Connection, ConnectionMode, Controls, Node, addEdge, useEdgesState, useNodeId, useNodesState } from 'reactflow';
 
@@ -22,20 +22,39 @@ const EDGE_TYPES = {
 
 const ReactFlowCanvas = () => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [selectedNodeId, setSelectedNodeId] = useState(null); // State to store the selected node ID
+    const nodeRef = useRef(null);
 
-
-    const handleMouseMove = (event) => {
+    const handleMouseMove = (event: any) => {
         setMousePosition({ x: event.clientX, y: event.clientY });
     };
 
     const nodesStore: Node[] = useNodeStore((state) => state.nodes)
     const updateNodePosition = useNodeStore((state) => state.updateNodePosition)
+    const updateNodes = useNodeStore((state) => state.updateNodes)
 
-    // update node position
-    const handleNodePosition = (nodes: Node[]) => {
-        console.log(nodes)
-    }
+    // // update node position
+    const handleNodePosition = (event: any, nodes: Node[]) => {
 
+        const selectedNodeId = event.target.getAttribute('id'); // Get the ID of the dragged node
+        const xPos = event.target.getAttribute('data-xPos'); // Get the x position of the dragged node
+        const yPos = event.target.getAttribute('data-yPos'); // Get the y position of the dragged node
+        const nodePosition = { x: xPos, y: yPos }; // Get the mouse position when the node is dropped
+
+        // Update the node's position
+        const updatedNodes = nodes.map((node: Node) => {
+            if (node.id === selectedNodeId) {
+                return {
+                    ...node,
+                    position: nodePosition
+                };
+            }
+            return node;
+        });
+        console.log(updatedNodes)
+        updateNodes(updatedNodes);
+        console.log("Node position updated:", updatedNodes);
+    };
 
     const [edges, setEdges, onEdgesChange] = useEdgesState([])
     const [nodes, setNodes, onNodesChange] = useNodesState(nodesStore)
@@ -62,7 +81,8 @@ const ReactFlowCanvas = () => {
             defaultEdgeOptions={{ type: "default" }}
             onConnect={onConnect}
             onNodesChange={onNodesChange}
-            onNodeDragStop={(e) => handleNodePosition(nodes)}
+            onNodeDragStop={(e) => handleNodePosition(e, nodes)}
+            // onMouseUp={(e) => handleNodePosition(e, nodes)}
             className='bg-zinc-50 cursor-crosshair'
             onMouseMove={handleMouseMove}
         >

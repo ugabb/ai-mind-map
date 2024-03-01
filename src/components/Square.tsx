@@ -1,5 +1,7 @@
+"use client"
+
 import useNodeStore from "@/store/NodeStore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Handle, NodeProps, NodeResizer, Position, useNodeId } from "reactflow";
 
 import 'reactflow/dist/style.css';
@@ -7,8 +9,7 @@ import 'reactflow/dist/style.css';
 import { blue } from "tailwindcss/colors";
 
 
-const Square = ({ selected, data, setData }: NodeProps & { setData: (data: any) => void }) => {
-    console.log(data)
+const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedLabel, setEditedLabel] = useState(data.label);
 
@@ -26,12 +27,15 @@ const Square = ({ selected, data, setData }: NodeProps & { setData: (data: any) 
         console.log(editedLabel)
         setIsEditing(false);
         updateNodeText(data.id, editedLabel)
-        setData({ ...data, label: editedLabel });
     };
 
+    // const nodeRef = useRef(null);
 
+    // useEffect(() => {
+    //     console.log(nodeRef?.current.getBoundingClientRect())
+    // }, [nodeRef.current])
     return (
-        <div className="flex justify-center items-center text-white bg-emerald-400 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
+        <div  id={id} data-xPos={xPos} data-yPos={yPos} className="flex justify-center items-center text-white bg-emerald-400 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
             {isEditing ? (
                 <input
                     type="text"
@@ -39,7 +43,7 @@ const Square = ({ selected, data, setData }: NodeProps & { setData: (data: any) 
                     onChange={handleInputChange}
                     onBlur={handleInputBlur}
                     autoFocus
-                    className="bg-transparent border-none outline-none text-white"
+                    className="bg-transparent border-none outline-none text-white cursor-text"
                 />
             ) : (
                 <>

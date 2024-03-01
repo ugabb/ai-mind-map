@@ -5,12 +5,15 @@ import { create, useStore } from "zustand";
 
 export interface NodeState {
   nodes: Node[];
+  currentNodePosition:  XYPosition;
   addNode: (node: Node) => void;
   updateNodePosition: (nodeId: string, position: XYPosition) => void;
-  updateNodeText: (nodeId: string, position: text) => void;
+  updateNodes: (nodes: Node[]) => void;
+  updateNodeText: (nodeId: string, position: string) => void;
   isCreatingNode: boolean;
   activeIsCreatingNode: () => void;
   disableIsCreatingNode: () => void;
+  nodePosition: (position: XYPosition) => void;
 }
 
 const INITIAL_NODES = [
@@ -30,8 +33,16 @@ const INITIAL_NODES = [
 
 const useNodeStore = create<NodeState>()((set) => ({
   nodes: [],
+  currentNodePosition: { x: 0, y: 0 },
   isCreatingNode: false,
   addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
+  updateNodes: (nodes: Node[]) =>
+    set((state) => ({
+      nodes: nodes,
+    })),
+  nodePosition: (position: XYPosition) => set((state) => ({
+    currentNodePosition: position
+  })),
   updateNodePosition: (nodeId, position) =>
     set((state) => ({
       nodes: state.nodes.map((node) =>
