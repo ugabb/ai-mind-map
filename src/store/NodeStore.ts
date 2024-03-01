@@ -5,7 +5,7 @@ import { create, useStore } from "zustand";
 
 export interface NodeState {
   nodes: Node[];
-  currentNodePosition:  XYPosition;
+  currentNodePosition: XYPosition;
   addNode: (node: Node) => void;
   updateNodePosition: (nodeId: string, position: XYPosition) => void;
   updateNodes: (nodes: Node[]) => void;
@@ -40,9 +40,10 @@ const useNodeStore = create<NodeState>()((set) => ({
     set((state) => ({
       nodes: nodes,
     })),
-  nodePosition: (position: XYPosition) => set((state) => ({
-    currentNodePosition: position
-  })),
+  nodePosition: (position: XYPosition) =>
+    set((state) => ({
+      currentNodePosition: position,
+    })),
   updateNodePosition: (nodeId, position) =>
     set((state) => ({
       nodes: state.nodes.map((node) =>
@@ -51,8 +52,8 @@ const useNodeStore = create<NodeState>()((set) => ({
     })),
   updateNodeText: (nodeId, newText) =>
     set((state) => ({
-      nodes: state.nodes.map((node) =>
-        node.id === nodeId ? { ...node, newText } : node
+      nodes: state.nodes.map((node: Node) =>
+        node.id === nodeId ? { ...node, data: { label: newText } } : node
       ),
     })),
   activeIsCreatingNode: () => set((state) => ({ isCreatingNode: true })),

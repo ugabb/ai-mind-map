@@ -24,13 +24,17 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     };
 
     const handleInputBlur = () => {
-        console.log(editedLabel)
+        console.log(id, editedLabel)
         setIsEditing(false);
-        updateNodeText(data.id, editedLabel)
+        updateNodeText(id, editedLabel)
     };
 
+    useEffect(() => {
+        console.log(data.label)
+    }, [data.label])
+
     return (
-        <div id={id}  className="flex justify-center items-center text-white bg-emerald-400 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
+        <div id={id} className="flex justify-center items-center font-medium  bg-emerald-400 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
             {isEditing ? (
                 <input
                     type="text"
@@ -38,7 +42,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                     onChange={handleInputChange}
                     onBlur={handleInputBlur}
                     autoFocus
-                    className="bg-transparent border-none outline-none text-white cursor-text"
+                    className="bg-transparent border-none outline-none  cursor-text text-center"
                 />
             ) : (
                 <>
@@ -77,7 +81,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                     />
 
                     {/* ... (other handles) */}
-                    {data.label}
+                    <p className="p-2 break-words text-center">{data.label}</p>
                 </>
             )}
             {/* <NodeResizer
