@@ -1,7 +1,7 @@
 "use client"
 
 import useNodeStore from "@/store/NodeStore";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Handle, NodeProps, NodeResizer, Position, useNodeId } from "reactflow";
 
 import 'reactflow/dist/style.css';
@@ -10,10 +10,11 @@ import { blue } from "tailwindcss/colors";
 
 
 const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditing, setIsEditing] = useState(true);
     const [editedLabel, setEditedLabel] = useState(data.label);
 
     const updateNodeText = useNodeStore((state) => state.updateNodeText)
+    const deleteNode = useNodeStore((state) => state.deleteNode)
 
     const handleDoubleClick = () => {
         setIsEditing(true);
@@ -29,20 +30,33 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
         updateNodeText(id, editedLabel)
     };
 
+    const handleKeyDown = useCallback((event: KeyboardEvent) => {
+        if (selected) {
+            if (event.key === "Delete" && id) {
+                deleteNode(id)
+            }
+        }
+    }, [selected, id])
+
     useEffect(() => {
-        console.log(data.label)
-    }, [data.label])
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [handleKeyDown])
 
     return (
         <div id={id} className="flex justify-center items-center font-medium  bg-emerald-400 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
             {isEditing ? (
                 <input
                     type="text"
+                    placeholder="Add text"
                     value={editedLabel}
                     onChange={handleInputChange}
                     onBlur={handleInputBlur}
                     autoFocus
-                    className="bg-transparent border-none outline-none  cursor-text text-center"
+                    className="bg-transparent border-none outline-none  cursor-text text-center placeholder:text-gray-700"
                 />
             ) : (
                 <>
@@ -54,31 +68,38 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                         handleClassName="h-3 w-3 bg-white border-2 rounded border-blue-400"
                     />
 
-                    <Handle
-                        id="right"
-                        type="source"
-                        position={Position.Right}
-                        style={{ background: blue[400], width: "12px", height: "12px", right: "-20px" }}
-                    />
+                    {selected &&
+                        (
+                            <>
+                                <Handle
+                                    id="right"
+                                    type="source"
+                                    position={Position.Right}
+                                    style={{ background: blue[400], width: "12px", height: "12px", right: "-20px" }}
+                                />
 
-                    <Handle
-                        id="left"
-                        type="source"
-                        position={Position.Left}
-                        style={{ background: blue[400], width: "12px", height: "12px", left: "-20px" }}
-                    />
-                    <Handle
-                        id="top"
-                        type="source"
-                        position={Position.Top}
-                        style={{ background: blue[400], width: "12px", height: "12px", top: "-20px" }}
-                    />
-                    <Handle
-                        id="bottom"
-                        type="source"
-                        position={Position.Bottom}
-                        style={{ background: blue[400], width: "12px", height: "12px", bottom: "-20px" }}
-                    />
+                                <Handle
+                                    id="left"
+                                    type="source"
+                                    position={Position.Left}
+                                    style={{ background: blue[400], width: "12px", height: "12px", left: "-20px" }}
+                                />
+                                <Handle
+                                    id="top"
+                                    type="source"
+                                    position={Position.Top}
+                                    style={{ background: blue[400], width: "12px", height: "12px", top: "-20px" }}
+                                />
+                                <Handle
+                                    id="bottom"
+                                    type="source"
+                                    position={Position.Bottom}
+                                    style={{ background: blue[400], width: "12px", height: "12px", bottom: "-20px" }}
+                                />
+                            </>
+                        )
+                    }
+
 
                     {/* ... (other handles) */}
                     <p className="p-2 break-words text-center">{data.label}</p>
