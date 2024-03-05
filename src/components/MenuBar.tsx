@@ -25,11 +25,13 @@ const MenuBar = () => {
 
     const handleCanvasClick = (event: any) => {
         if (isCreatingNode) {
-            const { offsetX, offsetY } = event;
+            const { offsetX, offsetY, clientX, clientY } = event;
+            // console.log({offsetX, offsetY})
+            // console.log(clientX, clientY)
             addNode({
                 id: crypto.randomUUID(),
                 position: { x: offsetX, y: offsetY },
-                data: { label: "NEW" },
+                data: { label: "" },
                 type: "square",
             });
 
