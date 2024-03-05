@@ -51,7 +51,7 @@ const MenuBar = () => {
     return (
         <Menubar className='fixed bottom-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-lg px-8 h-28 w-96 overflow-hidden'>
             <MenubarMenu>
-                <MenubarTrigger onClick={() => activeIsCreatingNode()} className={`w-28 h-28 bg-emerald-500 mt-6 rounded  transition-transform cursor-pointer hover:-translate-y-2`}>add node</MenubarTrigger>
+                <MenubarTrigger onClick={() => activeIsCreatingNode()} className={`w-28 h-28 bg-emerald-500 mt-6 rounded  transition-transform cursor-pointer hover:-translate-y-2`}></MenubarTrigger>
             </MenubarMenu>
         </Menubar>
     )
