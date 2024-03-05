@@ -12,11 +12,11 @@ import {
 import useNodeStore from "@/store/NodeStore"
 import { stat } from "fs";
 import { useEffect, useState } from "react";
+import { getNodesBounds } from "reactflow";
 
 
 const MenuBar = () => {
     // const [isCreatingNode, setIsCreatingNode] = useState(false);
-
 
     const addNode = useNodeStore((state) => state.addNode)
     const isCreatingNode = useNodeStore((state) => state.isCreatingNode)
@@ -49,14 +49,9 @@ const MenuBar = () => {
 
 
     return (
-        <Menubar className='fixed bottom-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-lg border-zinc-300 px-8 h-28 w-96 overflow-hidden'>
+        <Menubar className='fixed bottom-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-lg px-8 h-28 w-96 overflow-hidden'>
             <MenubarMenu>
-                <MenubarTrigger onClick={() => activeIsCreatingNode()} className={`${isCreatingNode
-                    ?
-                    "cursor-crosshair w-28 h-28 bg-red-500 mt-6 rounded  transition-transform hover:-translate-y-2"
-                    :
-                    "w-28 h-28 bg-emerald-500 mt-6 rounded  transition-transform cursor-pointer hover:-translate-y-2"
-                    } `}>add node</MenubarTrigger>
+                <MenubarTrigger onClick={() => activeIsCreatingNode()} className={`w-28 h-28 bg-emerald-500 mt-6 rounded  transition-transform cursor-pointer hover:-translate-y-2`}>add node</MenubarTrigger>
             </MenubarMenu>
         </Menubar>
     )
