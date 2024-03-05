@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import ReactFlow, { Background, Connection, ConnectionMode, Controls, MarkerType, Node, addEdge, useEdgesState, useNodeId, useNodesState } from 'reactflow';
+import ReactFlow, { Background, Connection, ConnectionMode, Controls, Edge, MarkerType, Node, addEdge, useEdgesState, useNodeId, useNodesState } from 'reactflow';
 
 import 'reactflow/dist/style.css';
 
@@ -30,6 +30,7 @@ const ReactFlowCanvas = () => {
     };
 
     const nodesStore: Node[] = useNodeStore((state) => state.nodes)
+    const edgesStore: Edge[] = useNodeStore((state) => state.edges)
     const updateNodePosition = useNodeStore((state) => state.updateNodePosition)
     const updateNodes = useNodeStore((state) => state.updateNodes)
 
@@ -41,7 +42,6 @@ const ReactFlowCanvas = () => {
         // Update the node's position
         const updatedNodes = nodes.map((node: Node) => {
             if (node.id === selectedNodeId) {
-                console.log(node)
                 return {
                     ...node,
                     position: node.position
@@ -49,18 +49,19 @@ const ReactFlowCanvas = () => {
             }
             return node;
         });
-        console.log(updatedNodes)
-        updateNodes(updatedNodes as Node[]);
-        console.log("Node position updated:", updatedNodes);
+
+        updateNodes(updatedNodes);
     };
 
-    const [edges, setEdges, onEdgesChange] = useEdgesState([])
+    const [edges, setEdges, onEdgesChange] = useEdgesState(edgesStore)
     const [nodes, setNodes, onNodesChange] = useNodesState(nodesStore)
 
     useEffect(() => {
         setNodes(nodesStore)
         console.log({ nodesStore })
     }, [nodesStore])
+
+
 
     const onConnect = useCallback((connection: Connection) => {
         return setEdges(edges => addEdge(connection, edges))
@@ -76,7 +77,7 @@ const ReactFlowCanvas = () => {
             edges={edges}
             onEdgesChange={onEdgesChange}
             edgeTypes={EDGE_TYPES}
-            defaultEdgeOptions={{ type: "default", markerEnd: {type: MarkerType.Arrow, width:25, height: 25, color: "#d4d4d8"} }}
+            defaultEdgeOptions={{ type: "default", markerEnd: { type: MarkerType.Arrow, width: 25, height: 25, color: "#d4d4d8" } }}
             onConnect={onConnect}
             onNodesChange={onNodesChange}
             onNodeDragStop={(e) => handleNodePosition(e, nodes)}

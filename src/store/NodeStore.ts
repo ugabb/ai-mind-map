@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { Node, XYPosition } from "reactflow";
+import { Edge, Node, XYPosition } from "reactflow";
 import { current } from "tailwindcss/colors";
 import { create, useStore } from "zustand";
 
@@ -15,22 +15,9 @@ export interface NodeState {
   activeIsCreatingNode: () => void;
   disableIsCreatingNode: () => void;
   nodePosition: (position: XYPosition) => void;
-}
 
-const INITIAL_NODES = [
-  {
-    id: crypto.randomUUID(),
-    position: { x: 200, y: 400 },
-    data: { label: "1" },
-    type: "square",
-  },
-  {
-    id: crypto.randomUUID(),
-    position: { x: 1000, y: 400 },
-    data: { label: "2" },
-    type: "square",
-  },
-] satisfies Node[];
+  edges: Edge[];
+}
 
 const useNodeStore = create<NodeState>()((set) => ({
   nodes: [],
@@ -39,7 +26,7 @@ const useNodeStore = create<NodeState>()((set) => ({
   addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
   updateNodes: (nodes: Node[]) =>
     set((state) => ({
-      nodes: nodes,
+      nodes,
     })),
   nodePosition: (position: XYPosition) =>
     set((state) => ({
@@ -63,6 +50,8 @@ const useNodeStore = create<NodeState>()((set) => ({
     })),
   activeIsCreatingNode: () => set((state) => ({ isCreatingNode: true })),
   disableIsCreatingNode: () => set((state) => ({ isCreatingNode: false })),
+
+  edges: [],
 }));
 
 export default useNodeStore;

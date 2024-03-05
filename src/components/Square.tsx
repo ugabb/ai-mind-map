@@ -2,7 +2,7 @@
 
 import useNodeStore from "@/store/NodeStore";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Handle, NodeProps, NodeResizer, Position, useNodeId, useNodesState } from "reactflow";
+import { Connection, Handle, NodeProps, Node, NodeResizer, Position, addEdge, useEdgesState, ResizeParams, useNodesState } from "reactflow";
 
 import { PiArrowCircleDownThin, PiArrowCircleLeftThin, PiArrowCircleRightThin, PiArrowCircleUpThin } from "react-icons/pi";
 
@@ -19,7 +19,12 @@ interface IDirection {
 
 const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
-    const nodes = useNodeStore((state) => state.nodes)
+    const nodesStore = useNodeStore((state) => state.nodes)
+    const edgesStore = useNodeStore((state) => state.edges)
+
+    const [nodes, setNodes, onNodesChange] = useNodesState(nodesStore)
+    const [edges, setEdges, onEdgesChange] = useEdgesState(edgesStore)
+
     const [isEditing, setIsEditing] = useState(true);
     const [isAddingNode, setIsAddingNode] = useState<IDirection>({
         top: false,
@@ -32,6 +37,20 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     const updateNodeText = useNodeStore((state) => state.updateNodeText)
     const addNode = useNodeStore((state) => state.addNode)
     const deleteNode = useNodeStore((state) => state.deleteNode)
+
+    const handleAddSideNode = (id: string) => {
+        const currentNode = nodes.find(node => node.id === id)
+        if (currentNode) {
+            addNode({
+                id: crypto.randomUUID(),
+                position: { x: currentNode.position.x + 300, y: yPos },
+                data: { label: "" },
+                type: "square",
+                width: currentNode.width,
+                height: currentNode.height,
+            })
+        }
+    }
 
     const handleDoubleClick = () => {
         setIsEditing(true);
@@ -48,12 +67,10 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
         // Focus on the input element when isEditing is true
         if (inputRef.current) {
             inputRef.current.focus();
-            console.log(isEditing, inputRef.current, selected)
         }
     }, []);
 
     const handleInputBlur = () => {
-        console.log(id, editedLabel)
         setIsEditing(false);
         updateNodeText(id, editedLabel)
     };
@@ -74,8 +91,32 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
         }
     }, [handleKeyDown])
 
+    // edges
+    const onConnect = useCallback((connection: Connection) => {
+        return setEdges(edges => addEdge(connection, edges))
+    }, [])
+
+
+    // // update node size
+    const handleNodeSize = (params: ResizeParams, nodes: Node[]) => {
+        // Update the node's position
+        const { width, height } = params;
+        const updatedNodes = nodes.map((node: Node) => {
+            if (node.id === id) {
+                return {
+                    ...node,
+                    width,
+                    height
+                }
+            }
+            return node;
+        });
+        setNodes(updatedNodes);
+        console.log("Node size updated:", updatedNodes);
+    };
+
     return (
-        <div id={id} className="flex justify-center items-center font-medium relative  bg-emerald-300 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
+        <div id={id} className="flex justify-center items-center font-medium relative  bg-emerald-300 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick}>
             {isEditing ? (
                 <input
                     ref={inputRef}
@@ -93,8 +134,9 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                         minHeight={200}
                         minWidth={200}
                         isVisible={selected}
-                        lineClassName="borderblue-400"
+                        lineClassName="border-blue-400"
                         handleClassName="h-3 w-3 bg-white border-2 rounded border-blue-400"
+                        onResizeEnd={(_, params) => handleNodeSize(params, nodes)}
                     />
 
 
@@ -110,15 +152,10 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                                     ...prev,
                                     right: false
                                 }))}
-                                onClick={() => addNode({
-                                    id: crypto.randomUUID(),
-                                    position: { x: xPos + 300, y: yPos },
-                                    data: { label: "" },
-                                    type: "square",
-                                })}
+                                onClick={() => handleAddSideNode(id)}
                                 className="flex items-center justify-center bg-transparent size-10 -right-10 border-none"
                             >
-                                <PiArrowCircleRightThin className="size-12 text-blue-400" />
+                                <PiArrowCircleRightThin className="size-10 text-blue-400" />
                             </Handle>
                         )
                         :
@@ -135,6 +172,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                             />
                         )
                     }
+
 
                     {isAddingNode.right && <div
                         className='bg-emerald-400/20 rounded  min-w-[200px] min-h-[200px]'
@@ -345,3 +383,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
 }
 
 export default Square
+
+function setEdges(arg0: (edges: any) => import("reactflow").Edge[]): any {
+    throw new Error("Function not implemented.");
+}
