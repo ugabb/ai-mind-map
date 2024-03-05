@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-import ReactFlow, { Background, Connection, ConnectionMode, Controls, Node, addEdge, useEdgesState, useNodeId, useNodesState } from 'reactflow';
+import ReactFlow, { Background, Connection, ConnectionMode, Controls, MarkerType, Node, addEdge, useEdgesState, useNodeId, useNodesState } from 'reactflow';
 
 import 'reactflow/dist/style.css';
 
@@ -76,7 +76,7 @@ const ReactFlowCanvas = () => {
             edges={edges}
             onEdgesChange={onEdgesChange}
             edgeTypes={EDGE_TYPES}
-            defaultEdgeOptions={{ type: "default" }}
+            defaultEdgeOptions={{ type: "default", markerEnd: {type: MarkerType.Arrow, width:25, height: 25, color: "#d4d4d8"} }}
             onConnect={onConnect}
             onNodesChange={onNodesChange}
             onNodeDragStop={(e) => handleNodePosition(e, nodes)}
