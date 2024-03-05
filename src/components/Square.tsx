@@ -47,7 +47,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     }, [handleKeyDown])
 
     return (
-        <div id={id} className="flex justify-center items-center font-medium  bg-emerald-400 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
+        <div id={id} className="flex justify-center items-center font-medium  bg-emerald-300 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick} onDragEnd={() => console.log("dropped")}>
             {isEditing ? (
                 <input
                     type="text"
@@ -68,9 +68,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                         handleClassName="h-3 w-3 bg-white border-2 rounded border-blue-400"
                     />
 
-                    {selected &&
-                        (
-                            <>
+               
                                 <Handle
                                     id="right"
                                     type="source"
@@ -96,10 +94,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                                     position={Position.Bottom}
                                     style={{ background: blue[400], width: "12px", height: "12px", bottom: "-20px" }}
                                 />
-                            </>
-                        )
-                    }
-
+                 
 
                     {/* ... (other handles) */}
                     <p className="p-2 break-words text-center">{data.label}</p>
