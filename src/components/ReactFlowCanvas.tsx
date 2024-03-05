@@ -41,9 +41,10 @@ const ReactFlowCanvas = () => {
         // Update the node's position
         const updatedNodes = nodes.map((node: Node) => {
             if (node.id === selectedNodeId) {
+                console.log(node)
                 return {
                     ...node,
-                    position: node.positionAbsolute
+                    position: node.position
                 };
             }
             return node;
@@ -58,7 +59,7 @@ const ReactFlowCanvas = () => {
 
     useEffect(() => {
         setNodes(nodesStore)
-        console.log(nodesStore)
+        console.log({ nodesStore })
     }, [nodesStore])
 
     const onConnect = useCallback((connection: Connection) => {
@@ -88,8 +89,8 @@ const ReactFlowCanvas = () => {
                     className='bg-emerald-400/20 rounded  min-w-[200px] min-h-[200px]'
                     style={{
                         position: 'absolute',
-                        left: mousePosition.x - 8, // Adjust the offset as needed
-                        top: mousePosition.y - 8, // Adjust the offset as neededty
+                        left: mousePosition?.x - 8, // Adjust the offset as needed
+                        top: mousePosition?.y - 8, // Adjust the offset as neededty
                         pointerEvents: 'none', // Allow clicks to pass through
                         zIndex: 1, // Ensure it's above the background
                     }}
