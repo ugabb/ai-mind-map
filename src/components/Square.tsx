@@ -40,7 +40,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     const addNode = useNodeStore((state) => state.addNode)
     const deleteNode = useNodeStore((state) => state.deleteNode)
 
-    const { getNode, addNodes } = useReactFlow()
+    const { getNode, getNodes, addNodes } = useReactFlow()
 
     // useEffect(() => {
     //     // console.log("isAddingNode", isAddingNode)
@@ -103,7 +103,14 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
 
     const handleInputBlur = () => {
         setIsEditing(false);
-        updateNodeText(id, editedLabel)
+        const nodes = getNodes()
+        nodes.map((node) => {
+            if (node.id === id) {
+                node.data.label = editedLabel;
+                return node
+            }
+        })
+        setNodes(nodes)
     };
 
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
