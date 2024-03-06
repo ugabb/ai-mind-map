@@ -2,13 +2,14 @@
 
 import useNodeStore from "@/store/NodeStore";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Connection, Handle, NodeProps, Node, NodeResizer, Position, addEdge, useEdgesState, ResizeParams, useNodesState } from "reactflow";
+import { Connection, Handle, NodeProps, Node, NodeResizer, Position, addEdge, useEdgesState, ResizeParams, useNodesState, useReactFlow } from "reactflow";
 
 import { PiArrowCircleDownThin, PiArrowCircleLeftThin, PiArrowCircleRightThin, PiArrowCircleUpThin } from "react-icons/pi";
 
 import 'reactflow/dist/style.css';
 
 import { blue, red } from "tailwindcss/colors";
+import { url } from "inspector";
 
 interface IDirection {
     top: boolean;
@@ -25,7 +26,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     const [nodes, setNodes, onNodesChange] = useNodesState(nodesStore)
     const [edges, setEdges, onEdgesChange] = useEdgesState(edgesStore)
 
-    const [isEditing, setIsEditing] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
     const [isAddingNode, setIsAddingNode] = useState<IDirection>({
         top: false,
         bottom: false,
@@ -35,20 +36,47 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     const [editedLabel, setEditedLabel] = useState(data.label);
 
     const updateNodeText = useNodeStore((state) => state.updateNodeText)
+    const updateNodes = useNodeStore((state) => state.updateNodes)
     const addNode = useNodeStore((state) => state.addNode)
     const deleteNode = useNodeStore((state) => state.deleteNode)
 
-    const handleAddSideNode = (id: string) => {
-        const currentNode = nodes.find(node => node.id === id)
-        if (currentNode) {
-            addNode({
-                id: crypto.randomUUID(),
-                position: { x: currentNode.position.x + 300, y: yPos },
-                data: { label: "" },
-                type: "square",
-                width: currentNode.width,
-                height: currentNode.height,
-            })
+    const { getNode, addNodes } = useReactFlow()
+
+    // useEffect(() => {
+    //     // console.log("isAddingNode", isAddingNode)
+    //     console.log("NODESS", nodes)
+    // }, [nodes, isAddingNode])
+
+    const nodeAtual = getNode(id)
+    const handleAddSideNode = (direction: string) => {
+
+
+        if (nodeAtual) {
+            console.log("NODE ATUAL:", nodeAtual)
+
+            if (direction === "left" || direction === "right") {
+                addNodes({
+                    id: crypto.randomUUID(),
+                    position: { x: nodeAtual.position.x + (direction === "left" ? -300 : 300), y: nodeAtual.position.y },
+                    data: { label: "" },
+                    type: "square",
+                    width: nodeAtual.width,
+                    height: nodeAtual.height,
+                })
+            } else {
+                addNodes({
+                    id: crypto.randomUUID(),
+                    position: {
+                        x: nodeAtual.position.x, y: nodeAtual.position.y + (direction === "top" ? -300 : 300)
+                    },
+                    data: { label: "" },
+                    type: "square",
+                    width: nodeAtual.width,
+                    height: nodeAtual.height,
+                })
+            }
+
+
         }
     }
 
@@ -152,11 +180,10 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                                     ...prev,
                                     right: false
                                 }))}
-                                onClick={() => handleAddSideNode(id)}
+                                onClick={() => handleAddSideNode("right")}
                                 className="flex items-center justify-center bg-transparent size-10 -right-10 border-none"
-                            >
-                                <PiArrowCircleRightThin className="size-10 text-blue-400" />
-                            </Handle>
+                                style={{ backgroundImage: `url(./arrow-circle-right.svg)`, backgroundRepeat: "no-repeat", backgroundPosition: "center" }}
+                            />
                         )
                         :
                         (
@@ -178,7 +205,9 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                         className='bg-emerald-400/20 rounded  min-w-[200px] min-h-[200px]'
                         style={{
                             position: 'absolute',
-                            left: 300, // Adjust the offset as needed
+                            width: nodeAtual?.width as number,
+                            height: nodeAtual?.height as number,
+                            right: -nodeAtual?.width as number - 100, // Adjust the offset as needed
                             // top: 5, // Adjust the offset as neededty
                             pointerEvents: 'none', // Allow clicks to pass through
                             zIndex: 1, // Ensure it's above the background
@@ -197,16 +226,12 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                                     ...prev,
                                     left: false
                                 }))}
-                                onClick={() => addNode({
-                                    id: crypto.randomUUID(),
-                                    position: { x: xPos - 300, y: yPos },
-                                    data: { label: "" },
-                                    type: "square",
-                                })}
+                                onClick={() => handleAddSideNode("left")}
                                 className="flex items-center justify-center bg-transparent size-10 -left-10 border-none"
-                            >
-                                <PiArrowCircleLeftThin className="size-12 text-blue-400" />
-                            </Handle>
+                                style={{
+                                    backgroundImage: `url(./arrow-circle-left.svg)`, backgroundRepeat: "no-repeat", backgroundPosition: "center",
+                                }}
+                            />
                         )
                         :
                         (
@@ -249,16 +274,12 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                                     ...prev,
                                     top: false
                                 }))}
-                                onClick={() => addNode({
-                                    id: crypto.randomUUID(),
-                                    position: { x: xPos, y: yPos - 300 },
-                                    data: { label: "" },
-                                    type: "square",
-                                })}
+                                onClick={() => handleAddSideNode("top")}
                                 className="flex items-center justify-center bg-transparent size-10 -top-10 border-none"
-                            >
-                                <PiArrowCircleUpThin className="size-12 text-blue-400" />
-                            </Handle>
+                                style={{
+                                    backgroundImage: `url(./arrow-circle-up.svg)`, backgroundRepeat: "no-repeat", backgroundPosition: "center",
+                                }}
+                            />
                         )
                         :
                         (
@@ -300,16 +321,12 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                                     ...prev,
                                     bottom: false
                                 }))}
-                                onClick={() => addNode({
-                                    id: crypto.randomUUID(),
-                                    position: { x: xPos, y: yPos + 300 },
-                                    data: { label: "" },
-                                    type: "square",
-                                })}
+                                onClick={() => handleAddSideNode("bottom")}
                                 className="flex items-center justify-center bg-transparent size-10 -bottom-10 border-none"
-                            >
-                                <PiArrowCircleDownThin className="size-12 text-blue-400" />
-                            </Handle>
+                                style={{
+                                    backgroundImage: `url(./arrow-circle-down.svg)`, backgroundRepeat: "no-repeat", backgroundPosition: "center",
+                                }}
+                            />
                         )
                         :
                         (

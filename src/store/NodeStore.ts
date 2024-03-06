@@ -23,7 +23,11 @@ const useNodeStore = create<NodeState>()((set) => ({
   nodes: [],
   currentNodePosition: { x: 0, y: 0 },
   isCreatingNode: false,
-  addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
+  addNode: (newNode) =>
+    set((state) => {
+      console.log(state.nodes);
+      return { nodes: [...state.nodes, newNode] };
+    }),
   updateNodes: (nodes: Node[]) =>
     set((state) => ({
       nodes,

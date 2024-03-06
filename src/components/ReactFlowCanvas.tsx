@@ -11,6 +11,7 @@ import { zinc } from "tailwindcss/colors"
 import Square from './Square';
 import DefaultEdge from './DefaultEdge';
 import useNodeStore from '@/store/NodeStore';
+import MenuBar from './MenuBar';
 
 
 const NODE_TYPES = {
@@ -54,12 +55,11 @@ const ReactFlowCanvas = () => {
     };
 
     const [edges, setEdges, onEdgesChange] = useEdgesState(edgesStore)
-    const [nodes, setNodes, onNodesChange] = useNodesState(nodesStore)
+    const [nodes, setNodes, onNodesChange] = useNodesState([])
 
     useEffect(() => {
-        setNodes(nodesStore)
-        console.log({ nodesStore })
-    }, [nodesStore])
+        console.log({ nodes })
+    }, [nodes])
 
 
 
@@ -104,6 +104,7 @@ const ReactFlowCanvas = () => {
                 color={zinc[200]}
             />
             <Controls />
+            <MenuBar setNodes={setNodes} />
         </ReactFlow>
 
     )
