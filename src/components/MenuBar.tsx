@@ -12,10 +12,13 @@ import {
 import useNodeStore from "@/store/NodeStore"
 import { stat } from "fs";
 import { useEffect, useState } from "react";
-import { getNodesBounds } from "reactflow";
+import { getNodesBounds, useNodesState } from "reactflow";
 
+interface MenuProps {
+    setNodes: (nodes: any[]) => void
+}
 
-const MenuBar = () => {
+const MenuBar = ({ setNodes }: MenuProps) => {
     // const [isCreatingNode, setIsCreatingNode] = useState(false);
 
     const addNode = useNodeStore((state) => state.addNode)
@@ -28,12 +31,17 @@ const MenuBar = () => {
             const { offsetX, offsetY, clientX, clientY } = event;
             // console.log({offsetX, offsetY})
             // console.log(clientX, clientY)
-            addNode({
-                id: crypto.randomUUID(),
-                position: { x: offsetX, y: offsetY },
-                data: { label: "" },
-                type: "square",
-            });
+
+            setNodes((prev: Node[]) => {
+                return [...prev, {
+                    id: crypto.randomUUID(),
+                    position: { x: offsetX, y: offsetY },
+                    data: { label: "", },
+                    type: "square",
+                    width: 200,
+                    height: 200
+                }]
+            })
 
             disableIsCreatingNode(); // Disable node creation mode after placing the node
         }
@@ -49,7 +57,7 @@ const MenuBar = () => {
 
 
     return (
-        <Menubar className='fixed bottom-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-lg px-8 h-28 w-96 overflow-hidden'>
+        <Menubar className='fixed bottom-20 left-1/2 -translate-x-1/2 bg-white rounded-2xl shadow-lg px-8 h-28 w-96 overflow-hidden z-50'>
             <MenubarMenu>
                 <MenubarTrigger onClick={() => activeIsCreatingNode()} className={`w-28 h-28 bg-emerald-500 mt-6 rounded  transition-transform cursor-pointer hover:-translate-y-2`}></MenubarTrigger>
             </MenubarMenu>
