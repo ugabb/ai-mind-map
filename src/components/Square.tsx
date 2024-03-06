@@ -57,17 +57,20 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
             if (direction === "left" || direction === "right") {
                 addNodes({
                     id: crypto.randomUUID(),
-                    position: { x: nodeAtual.position.x + (direction === "left" ? -300 : 300), y: nodeAtual.position.y },
+                    position: {
+                        x: nodeAtual.position.x + (direction === "left" ? -nodeAtual.width - 100 : nodeAtual.width + 100), y: nodeAtual.position.y
+                    },
                     data: { label: "" },
                     type: "square",
                     width: nodeAtual.width,
                     height: nodeAtual.height,
+                    expandParent: true
                 })
             } else {
                 addNodes({
                     id: crypto.randomUUID(),
                     position: {
-                        x: nodeAtual.position.x, y: nodeAtual.position.y + (direction === "top" ? -300 : 300)
+                        x: nodeAtual.position.x, y: nodeAtual.position.y + (direction === "top" ? -nodeAtual.height - 100 : nodeAtual.height + 100)
                     },
                     data: { label: "" },
                     type: "square",
@@ -144,7 +147,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     };
 
     return (
-        <div id={id} className="flex justify-center items-center font-medium relative  bg-emerald-300 rounded w-full h-full min-w-[200px] min-h-[200px]" onDoubleClick={handleDoubleClick}>
+        <div id={id} className={`flex justify-center items-center font-medium relative  bg-emerald-300 rounded w-[${nodeAtual?.width}] h-[${nodeAtual?.height}]`} onDoubleClick={handleDoubleClick} style={{ width: nodeAtual?.width as number, height: nodeAtual?.height as number }}>
             {isEditing ? (
                 <input
                     ref={inputRef}
@@ -255,7 +258,9 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                         className='bg-emerald-400/20 rounded  min-w-[200px] min-h-[200px]'
                         style={{
                             position: 'absolute',
-                            left: -300, // Adjust the offset as needed
+                            width: nodeAtual?.width as number,
+                            height: nodeAtual?.height as number,
+                            left: -nodeAtual?.width as number - 100, // Adjust the offset as needed
                             // top: 5, // Adjust the offset as neededty
                             pointerEvents: 'none', // Allow clicks to pass through
                             zIndex: 1, // Ensure it's above the background
@@ -302,8 +307,10 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                         className='bg-emerald-400/20 rounded  min-w-[200px] min-h-[200px]'
                         style={{
                             position: 'absolute',
-                            // left: -300, // Adjust the offset as needed
-                            top: -300, // Adjust the offset as neededty
+                            width: nodeAtual?.width as number,
+                            height: nodeAtual?.height as number,
+                            top: -nodeAtual?.height as number - 100, // Adjust the offset as needed
+                            // top: 5, // Adjust the offset as neededty
                             pointerEvents: 'none', // Allow clicks to pass through
                             zIndex: 1, // Ensure it's above the background
                         }}
@@ -349,8 +356,10 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                         className='bg-emerald-400/20 rounded  min-w-[200px] min-h-[200px]'
                         style={{
                             position: 'absolute',
-                            // left: -300, // Adjust the offset as needed
-                            top: 300, // Adjust the offset as neededty
+                            width: nodeAtual?.width as number,
+                            height: nodeAtual?.height as number,
+                            bottom: -nodeAtual?.height as number - 100, // Adjust the offset as needed
+                            // top: 5, // Adjust the offset as neededty
                             pointerEvents: 'none', // Allow clicks to pass through
                             zIndex: 1, // Ensure it's above the background
                         }}
