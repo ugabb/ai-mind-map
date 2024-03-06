@@ -2,7 +2,7 @@
 
 import useNodeStore from "@/store/NodeStore";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Connection, Handle, NodeProps, Node, NodeResizer, Position, addEdge, useEdgesState, ResizeParams, useNodesState, useReactFlow } from "reactflow";
+import { Connection, Handle, NodeProps, Node, NodeResizer, Position, addEdge, useEdgesState, ResizeParams, useNodesState, useReactFlow, useStore } from "reactflow";
 
 import { PiArrowCircleDownThin, PiArrowCircleLeftThin, PiArrowCircleRightThin, PiArrowCircleUpThin } from "react-icons/pi";
 
@@ -18,6 +18,7 @@ interface IDirection {
     right: boolean;
 }
 
+
 const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const nodesStore = useNodeStore((state) => state.nodes)
@@ -25,6 +26,8 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
 
     const [nodes, setNodes, onNodesChange] = useNodesState(nodesStore)
     const [edges, setEdges, onEdgesChange] = useEdgesState(edgesStore)
+
+    const setNodes_ = useStore(state => state.setNodes)
 
     const [isEditing, setIsEditing] = useState(false);
     const [isAddingNode, setIsAddingNode] = useState<IDirection>({
@@ -35,12 +38,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     });
     const [editedLabel, setEditedLabel] = useState(data.label);
 
-    const updateNodeText = useNodeStore((state) => state.updateNodeText)
-    const updateNodes = useNodeStore((state) => state.updateNodes)
-    const addNode = useNodeStore((state) => state.addNode)
-    const deleteNode = useNodeStore((state) => state.deleteNode)
-
-    const { getNode, getNodes, addNodes } = useReactFlow()
+    const { getNode, getNodes, addNodes, deleteElements } = useReactFlow()
 
     // useEffect(() => {
     //     // console.log("isAddingNode", isAddingNode)
@@ -110,16 +108,19 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                 return node
             }
         })
-        setNodes(nodes)
+        setNodes_(nodes)
     };
 
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
         if (selected) {
             if (event.key === "Delete" && id) {
-                deleteNode(id)
+                const nodesToDelete = [{ id }]; // Array of nodes to delete
+
+                // Use deleteElements to delete nodes
+                deleteElements({ nodes: nodesToDelete });
             }
         }
-    }, [selected, id])
+    }, [selected, id, getNodes, deleteElements]);
 
     useEffect(() => {
         document.addEventListener("keydown", handleKeyDown);
@@ -149,7 +150,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
             }
             return node;
         });
-        setNodes(updatedNodes);
+        setNodes_(updatedNodes);
         console.log("Node size updated:", updatedNodes);
     };
 
