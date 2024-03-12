@@ -4,7 +4,7 @@ import useNodeStore from "@/store/NodeStore";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Connection, Handle, NodeProps, Node, NodeResizer, Position, addEdge, useEdgesState, ResizeParams, useNodesState, useReactFlow, useStore } from "reactflow";
 
-import { PiArrowCircleDownThin, PiArrowCircleLeftThin, PiArrowCircleRightThin, PiArrowCircleUpThin } from "react-icons/pi";
+import { PiArrowCircleDownThin, PiArrowCircleLeftThin, PiArrowCircleRightThin, PiArrowCircleUpThin, PiArrowRight } from "react-icons/pi";
 
 import 'reactflow/dist/style.css';
 
@@ -38,22 +38,24 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     });
     const [editedLabel, setEditedLabel] = useState(data.label);
 
-    const { getNode, getNodes, addNodes, deleteElements } = useReactFlow()
+    const { getNode, getNodes, addNodes, deleteElements, addEdges, getEdge, getEdges } = useReactFlow()
 
-    // useEffect(() => {
-    //     // console.log("isAddingNode", isAddingNode)
-    //     console.log("NODESS", nodes)
-    // }, [nodes, isAddingNode])
+
+    const handleNewConnections = (newConnection: Connection) => {
+        const currentEdges = getEdges()
+        const newEdges = addEdge(newConnection, currentEdges)
+        addEdges(newEdges)
+    }
 
     const nodeAtual = getNode(id)
     const handleAddSideNode = (direction: string) => {
 
 
         if (nodeAtual) {
-            console.log("NODE ATUAL:", nodeAtual)
+            // console.log("NODE ATUAL:", nodeAtual)
 
             if (direction === "left" || direction === "right") {
-                addNodes({
+                const newNode: Node = {
                     id: crypto.randomUUID(),
                     position: {
                         x: nodeAtual.position.x + (direction === "left" ? -nodeAtual.width - 100 : nodeAtual.width + 100), y: nodeAtual.position.y
@@ -63,7 +65,18 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                     width: nodeAtual.width,
                     height: nodeAtual.height,
                     expandParent: true
-                })
+                }
+
+                const newConnection: Connection = {
+                    source: nodeAtual.id,
+                    target: newNode.id,
+                    sourceHandle: direction,
+                    targetHandle: direction === "left" ? "right" : "left"
+                }
+
+                handleNewConnections(newConnection)
+
+                addNodes(newNode)
             } else {
                 addNodes({
                     id: crypto.randomUUID(),
@@ -80,6 +93,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
 
         }
     }
+
 
     const handleDoubleClick = () => {
         setIsEditing(true);
@@ -129,11 +143,6 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
             document.removeEventListener("keydown", handleKeyDown)
         }
     }, [handleKeyDown])
-
-    // edges
-    const onConnect = useCallback((connection: Connection) => {
-        return setEdges(edges => addEdge(connection, edges))
-    }, [])
 
 
     // // update node size
@@ -223,7 +232,9 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
                             pointerEvents: 'none', // Allow clicks to pass through
                             zIndex: 1, // Ensure it's above the background
                         }}
-                    />}
+
+                    />
+                    }
 
 
                     {isAddingNode.left

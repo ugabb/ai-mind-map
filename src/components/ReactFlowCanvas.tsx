@@ -12,6 +12,7 @@ import Square from './Square';
 import DefaultEdge from './DefaultEdge';
 import useNodeStore from '@/store/NodeStore';
 import MenuBar from './MenuBar';
+import { create } from 'zustand';
 
 
 const NODE_TYPES = {
@@ -23,8 +24,6 @@ const EDGE_TYPES = {
 
 const ReactFlowCanvas = () => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [selectedNodeId, setSelectedNodeId] = useState(null); // State to store the selected node ID
-    const nodeRef = useRef(null);
 
     const handleMouseMove = (event: any) => {
         setMousePosition({ x: event.clientX, y: event.clientY });
@@ -57,15 +56,21 @@ const ReactFlowCanvas = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState(edgesStore)
     const [nodes, setNodes, onNodesChange] = useNodesState([])
 
+
+
     useEffect(() => {
         console.log({ nodes })
     }, [nodes])
 
+    useEffect(() => {
+        // console.log("isAddingNode", isAddingNode)
+        console.log("EDGES", edges)
+    }, [edges])
 
 
     const onConnect = useCallback((connection: Connection) => {
         return setEdges(edges => addEdge(connection, edges))
-    }, [])
+    }, [setEdges])
 
     const isCreatingNode = useNodeStore((state) => state.isCreatingNode)
 
