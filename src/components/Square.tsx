@@ -25,7 +25,7 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     const edgesStore = useNodeStore((state) => state.edges)
 
     const [nodes, setNodes, onNodesChange] = useNodesState(nodesStore)
-    const [edges, setEdges, onEdgesChange] = useEdgesState(edgesStore)
+    // const [edges, setEdges, onEdgesChange] = useEdgesState(edgesStore)
 
     const setNodes_ = useStore(state => state.setNodes)
 
@@ -38,13 +38,15 @@ const Square = ({ selected, data, id, xPos, yPos }: NodeProps) => {
     });
     const [editedLabel, setEditedLabel] = useState(data.label);
 
-    const { getNode, getNodes, addNodes, deleteElements, addEdges, getEdge, getEdges } = useReactFlow()
+    const { getNode, getNodes, addNodes, deleteElements, addEdges, getEdge, getEdges,setEdges } = useReactFlow()
 
 
     const handleNewConnections = (newConnection: Connection) => {
         const currentEdges = getEdges()
         const newEdges = addEdge(newConnection, currentEdges)
-        addEdges(newEdges)
+        console.log("new Edges:", newEdges)
+        setEdges(newEdges)
+        // addEdges(newEdges)
     }
 
     const nodeAtual = getNode(id)
