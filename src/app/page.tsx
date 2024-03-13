@@ -6,7 +6,7 @@ import ReactFlowCanvas from "@/components/ReactFlowCanvas";
 
 export default function Home() {
   return (
-    <div className="w-screen h-screen ">
+    <div className="w-screen h-screen cursor">
       <ReactFlowCanvas />
     </div>
   );

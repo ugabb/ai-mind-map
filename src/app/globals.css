@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+    cursor: url(/cursor/Normal.cur), auto !important;
+}
+
+.cur-pointer{
+    cursor: url(/cursor/Pointer2.cur), auto !important;
+}

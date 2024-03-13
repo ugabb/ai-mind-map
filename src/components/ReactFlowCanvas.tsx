@@ -74,6 +74,7 @@ const ReactFlowCanvas = () => {
 
     const isCreatingNode = useNodeStore((state) => state.isCreatingNode)
 
+
     return (
         <ReactFlow
             nodeTypes={NODE_TYPES}
@@ -87,7 +88,7 @@ const ReactFlowCanvas = () => {
             onNodesChange={onNodesChange}
             onNodeDragStop={(e) => handleNodePosition(e, nodes)}
             // onMouseUp={(e) => handleNodePosition(e, nodes)}
-            className='bg-zinc-50 cursor-crosshair'
+            className='bg-zinc-50 cursor-crosshair cursor'
             onMouseMove={handleMouseMove}
         >
             {isCreatingNode && (
