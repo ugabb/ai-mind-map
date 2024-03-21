@@ -2,10 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-    cursor: url(/cursor/Normal.cur), auto !important;
+body {
+  cursor: url(/cursor/Normal.cur), auto !important;
 }
 
-.cur-pointer{
-    cursor: url(/cursor/Pointer2.cur), auto !important;
+.cur-pointer {
+  cursor: url(/cursor/Pointer2.cur), auto !important;
+}
+.cur-resize {
+  cursor: url(/cursor/Frontslash.cur), auto !important;
 }
